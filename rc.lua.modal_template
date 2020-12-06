@@ -56,18 +56,17 @@ end
 -- This function will run once every time Awesome is started
 local function run_once(cmd_arr)
     for _, cmd in ipairs(cmd_arr) do
-        awful.spawn.with_shell(string.format("pgrep -u $USER -f '%s' > /dev/null || (%s)", cmd, cmd))
+        local cmd_name = cmd
+        if type(cmd) == 'table' then
+            cmd_name = cmd[1]
+            cmd = table.concat(cmd, " ")
+        end
+
+        awful.spawn.with_shell(string.format("pgrep -u $USER -lx '%s' > /dev/null || (%s)", cmd_name, cmd))
     end
 end
 
 run_once({ 
-    "urxvtd", 
-    "unclutter -root", 
-    "optimus-manager-qt", 
-    "blueman-tray",
-    "redshift",
-    "libinput-gestures",
-    "udiskie --tray"
 }) -- entries must be separated by commas
 
 -- This function implements the XDG autostart specification
