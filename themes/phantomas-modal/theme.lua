@@ -5,11 +5,14 @@
 
 --]]
 
+local awesome, client, mouse, screen, tag = awesome, client, mouse, screen, tag
+
 local gears = require("gears")
 local lain  = require("lain")
 local awful = require("awful")
 local wibox = require("wibox")
 local dpi   = require("beautiful.xresources").apply_dpi
+local beautiful = require("beautiful")
 local modalawesome = require("modalawesome")
 
 local os = os
@@ -36,8 +39,14 @@ theme.titlebar_fg_focus                         = theme.fg_focus
 theme.menu_height                               = dpi(16)
 theme.menu_width                                = dpi(140)
 theme.menu_submenu_icon                         = theme.dir .. "/icons/submenu.png"
-theme.taglist_squares_sel                       = theme.dir .. "/icons/square_sel.png"
-theme.taglist_squares_unsel                     = theme.dir .. "/icons/square_unsel.png"
+theme.taglist_font                              = 'Monospace Bold'
+theme.taglist_fg_focus                          = '#1A1A1A'
+theme.taglist_bg_focus                          = 'alpha'
+theme.taglist_bg_urgent                         = 'alpha'
+theme.taglist_main_focus                        = '#46A8C3'
+theme.taglist_other_focus                       = '#7AC82E'
+theme.taglist_squares_sel                       = beautiful.theme_assets.taglist_squares_sel(dpi(4), '#ffffff')
+theme.taglist_squares_unsel                     = beautiful.theme_assets.taglist_squares_unsel(dpi(4), '#ffffff')
 theme.layout_tile                               = theme.dir .. "/icons/tile.png"
 theme.layout_tileleft                           = theme.dir .. "/icons/tileleft.png"
 theme.layout_tilebottom                         = theme.dir .. "/icons/tilebottom.png"
@@ -88,11 +97,19 @@ theme.titlebar_maximized_button_focus_active    = theme.dir .. "/icons/titlebar/
 theme.titlebar_maximized_button_normal_active   = theme.dir .. "/icons/titlebar/maximized_normal_active.png"
 theme.titlebar_maximized_button_focus_inactive  = theme.dir .. "/icons/titlebar/maximized_focus_inactive.png"
 theme.titlebar_maximized_button_normal_inactive = theme.dir .. "/icons/titlebar/maximized_normal_inactive.png"
+theme.margin                                    = dpi(4)
+theme.mode_colors                               = {
+    insert = '#af8700',
+    visual = '#af005f',
+    launcher = '#d70000',
+    tag = '#5f8700'
+}
 
 local markup = lain.util.markup
 local separators = lain.util.separators
 
 local keyboardlayout = awful.widget.keyboardlayout:new()
+keyboardlayout.widget.font = "monospace bold 9"
 
 -- Textclock
 local clockicon = wibox.widget.imagebox(theme.widget_clock)
@@ -266,6 +283,113 @@ local net = lain.widget.net({
     end
 })
 
+local modeinfo = wibox.widget {
+    widget = wibox.container.background,
+    {
+        widget = wibox.layout.fixed.horizontal,
+        {
+            widget = wibox.container.margin,
+            top = theme.margin,
+            left = theme.margin,
+            right = theme.margin,
+            {
+                id = "content",
+                widget = wibox.widget.textbox,
+                font = "Monospace Bold"
+            }
+        },
+        {
+            id = "arrow",
+            widget = separators.arrow_right("alpha", theme.bg_normal)
+        }
+    }
+}
+
+modalawesome.active_mode:connect_signal("widget::redraw_needed", function(widget)
+    local text = widget.text
+    local content = modeinfo:get_children_by_id("content")[1]
+    content.text = string.upper(widget.text)
+
+    if theme.mode_colors[string.lower(text)] ~= nil then
+        modeinfo.bg = theme.mode_colors[string.lower(text)]
+    else
+        modeinfo.bg = theme.bg_normal
+    end
+end)
+
+local function taglist_setup(s, filter, buttons)
+    local function color_bg_tag(widget, tag)
+        local layout = widget:get_children_by_id("layout_role")[1]
+        local background = widget:get_children_by_id("background")[1]
+        local main_tag = s.selected_tag
+
+        if tag == main_tag then
+            layout:set(1, lain.util.separators.arrow_right("alpha", theme.taglist_main_focus))
+            layout:set(3, lain.util.separators.arrow_right(theme.taglist_main_focus, "alpha"))
+            background.bg = theme.taglist_main_focus
+        elseif tag.selected then
+            layout:set(1, lain.util.separators.arrow_right("alpha", theme.taglist_other_focus))
+            layout:set(3, lain.util.separators.arrow_right(theme.taglist_other_focus, "alpha"))
+            background.bg = theme.taglist_other_focus
+        else
+            layout:set(1, lain.util.separators.arrow_right("alpha", theme.bg_normal))
+            layout:set(3, lain.util.separators.arrow_right(theme.bg_normal, "alpha"))
+            background.bg = theme.bg_normal
+        end
+    end
+
+    local taglist = awful.widget.taglist {
+        screen = s,
+        filter = filter,
+        buttons = buttons,
+        layout = {
+            spacing = dpi(-2),
+            layout = wibox.layout.fixed.horizontal
+        },
+        widget_template = {
+            id = 'layout_role',
+            layout = wibox.layout.fixed.horizontal,
+            {
+                id = 'arrow_before',
+                widget = wibox.widget.textbox
+            },
+            {
+                id = 'background',
+                widget = wibox.container.background,
+                {
+                    id = 'background_role',
+                    widget = wibox.container.background,
+                    {
+                        id = 'text_margin_role',
+                        widget = wibox.container.margin,
+                        left = theme.margin,
+                        right = theme.margin,
+                        top = theme.margin,
+                        {
+                            id = 'text_role',
+                            widget = wibox.widget.textbox
+                        }
+                    }
+                },
+            },
+            {
+                id = 'arrow_after',
+                widget = wibox.widget.textbox
+            },
+            create_callback = function(self, tag, index, tags)
+                local _ = index
+                _ = tags
+                color_bg_tag(self, tag)
+            end,
+            update_callback = function(self, tag, index, tags)
+                color_bg_tag(self, tag)
+            end
+        },
+    }
+    return taglist
+end
+
+
 -- Separators
 local spr     = wibox.widget.textbox(' ')
 local arrl_dl = separators.arrow_left(theme.bg_focus, "alpha")
@@ -297,7 +421,7 @@ function theme.at_screen_connect(s)
                            awful.button({}, 4, function () awful.layout.inc( 1) end),
                            awful.button({}, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, awful.util.taglist_buttons)
+    s.mytaglist = taglist_setup(s, awful.widget.taglist.filter.all, awful.util.taglist_buttons)
 
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons)
@@ -310,48 +434,59 @@ function theme.at_screen_connect(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            modalawesome.active_mode,
+            modeinfo,
+            --modalawesome.active_mode,
             spr,
             s.mytaglist,
-            s.mypromptbox,
+            {
+                widget = wibox.container.margin,
+                left = theme.margin,
+                spr
+            },
+            --spr,
+            wibox.container.margin(s.mypromptbox, 0, 0, theme.margin),
             spr,
         },
-        s.mytasklist, -- Middle widget
+        wibox.container.margin(s.mytasklist, 0, 0, theme.margin), -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             modalawesome.sequence,
             wibox.widget.systray(),
-            keyboardlayout,
+            wibox.container.margin(keyboardlayout, 0, 0, theme.margin),
             spr,
             arrl_ld,
             wibox.container.background(mpdicon, theme.bg_focus),
-            wibox.container.background(theme.mpd.widget, theme.bg_focus),
+            wibox.container.background(wibox.container.margin(theme.mpd.widget, 0, 0, theme.margin), theme.bg_focus),
             arrl_dl,
             volicon,
-            theme.volume.widget,
+            {
+                widget = wibox.container.margin,
+                top = theme.margin,
+                theme.volume.widget,
+            },
             arrl_ld,
             wibox.container.background(mailicon, theme.bg_focus),
-            --wibox.container.background(theme.mail.widget, theme.bg_focus),
+            --wibox.container.background(wibox.container.margin(theme.mail.widget, 0, 0, theme.margin), theme.bg_focus),
             arrl_dl,
             memicon,
-            mem.widget,
+            wibox.container.margin(mem.widget, 0, 0, theme.margin),
             arrl_ld,
             wibox.container.background(cpuicon, theme.bg_focus),
-            wibox.container.background(cpu.widget, theme.bg_focus),
+            wibox.container.background(wibox.container.margin(cpu.widget, 0, 0, theme.margin), theme.bg_focus),
             arrl_dl,
             tempicon,
-            temp.widget,
+            wibox.container.margin(temp.widget, 0, 0, theme.margin),
             arrl_ld,
             wibox.container.background(fsicon, theme.bg_focus),
-            --wibox.container.background(theme.fs.widget, theme.bg_focus),
+            --wibox.container.background(wibox.container.margin(theme.fs.widget, 0, 0, theme.margin), theme.bg_focus),
             arrl_dl,
             baticon,
-            bat.widget,
+            wibox.container.margin(bat.widget, 0, 0, theme.margin),
             arrl_ld,
             wibox.container.background(neticon, theme.bg_focus),
-            wibox.container.background(net.widget, theme.bg_focus),
+            wibox.container.background(wibox.container.margin(net.widget, 0, 0, theme.margin), theme.bg_focus),
             arrl_dl,
-            clock,
+            wibox.container.margin(clock, 0, 0, theme.margin),
             spr,
             arrl_ld,
             wibox.container.background(s.mylayoutbox, theme.bg_focus),
