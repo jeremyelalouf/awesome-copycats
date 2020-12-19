@@ -3,8 +3,6 @@ local awesome, client, mouse, screen, tag = awesome, client, mouse, screen, tag
 local awful         = require("awful")
 local beautiful     = require("beautiful")
 local lain          = require("lain")
-local wibox         = require("wibox")
-local hotkeys_popup = require("awful.hotkeys_popup")
 
 local utils = require("modes.utils")
 local taghelper = utils.taghelper
@@ -32,7 +30,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Tag: Undo history",
+        description = utils.accent("T") .. "ag: " .. utils.accent("U") .. "ndo history",
         pattern = { 't', '%d*', 'u' },
         handler = function(_, _, count)
             count = count == '' and "previous" or tonumber(count)
@@ -40,24 +38,24 @@ local normal_commands = {
         end
     },
     {
-        description = "Toggle Tag",
+        description = utils.accent("T") .. "oggle " .. utils.accent("T") ..  "ag",
         pattern = { 't', 't?', '%d*', '[ghl]' },
         handler = function(_, _, _, count, movement)
             taghelper(awful.tag.viewtoggle, count, movement)
         end
     },
     {
-        description = "Tag: New",
+        description = utils.accent("T") .. "ag: " .. utils.accent("N") .. "ew",
         pattern = { 't', 'n' },
         handler = function() lain.util.add_tag() end,
     },
     {
-        description = "Tag: Rename",
+        description = utils.accent("T") .. "ag: " .. utils.accent("R") .. "ename",
         pattern = { 't', 'r' },
         handler = function() lain.util.rename_tag() end,
     },
     {
-        description = "Tag: eXecute in new tag",
+        description = utils.accent("T") .. "ag: e" .. utils.accent("X") .. "ecute in new tag",
         pattern = { 't', 'x' },
         handler = function()
             awful.prompt.run {
@@ -74,14 +72,14 @@ local normal_commands = {
         end
     },
     {
-        description = "Delete tag",
+        description = utils.accent("D") .. "elete " .. utils.accent("T") .. "ag",
         pattern = { 'd', 't' },
         handler = function () lain.util.delete_tag() end
     },
 
     -- Client handling
     {
-        description = "close focused client",
+        description = utils.accent("D") .. "elete (close) focused " .. utils.accent("C") .. "lient",
         pattern = {'d', '[dc]'},
         handler = function()
             local c = client.focus
@@ -91,7 +89,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Client toggle floaTing",
+        description = utils.accent("C") .. "lient toggle floa" .. utils.accent("T") .. "ing",
         pattern = { 'c', 't' },
         handler = function()
             local c = client.focus
@@ -101,7 +99,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Client toggle Keep on top",
+        description = utils.accent("C") .. "lient toggle " .. utils.accent("K") .. "eep on top",
         pattern = { 'c', 'k' },
         handler = function()
             local c = client.focus
@@ -111,7 +109,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Client toggle Sticky",
+        description = utils.accent("C") .. "lient toggle " .. utils.accent("S") .. "ticky",
         pattern = { 'c', 's' },
         handler = function()
             local c = client.focus
@@ -121,7 +119,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Client toggle Fullscreen",
+        description = utils.accent("C") .. "lient toggle " .. utils.accent("F") .. "ullscreen",
         pattern = { 'c', 'f' },
         handler = function()
             local c = client.focus
@@ -132,7 +130,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Client toggle Maximize",
+        description = utils.accent("C") .. "lient toggle " .. utils.accent("M") .. "aximize",
         pattern = { 'c', 'm' },
         handler = function()
             local c = client.focus
@@ -143,14 +141,14 @@ local normal_commands = {
         end
     },
     {
-        description = "Client toggle Magnify",
+        description = utils.accent("C") .. "lient toggle " .. utils.accent("M") .. "agnify",
         pattern = { 'c', 'M' },
         handler = function()
             lain.util.magnify_client(client.focus)
         end
     },
     {
-        description = "Client miNimize",
+        description = utils.accent("C") .. "lient mi" .. utils.accent("N") .. "imize",
         pattern = { 'c', 'n' },
         handler = function()
             local c = client.focus
@@ -160,7 +158,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Client Restore",
+        description = utils.accent("C") .. "lient " .. utils.accent("R") .. "estore",
         pattern = { 'c', 'r' },
         handler = function()
             local c = awful.client.restore()
@@ -171,7 +169,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Client Jump to urgent",
+        description = utils.accent("C") .. "lient " .. utils.accent("J") .. "ump to urgent",
         pattern = { 'c', 'j' },
         handler = function(mode)
             awful.client.urgent.jumpto()
@@ -179,7 +177,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Client Undo history",
+        description = utils.accent("C") .. "lient " .. utils.accent("U") .. "ndo history",
         pattern = { 'c', '%d*' ,'u' },
         handler = function (_, _, count)
             count = count == '' and 1 or tonumber(count)
@@ -203,7 +201,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Toggle focused Client on tag",
+        description = utils.accent("T") .. "oggle focused " .. utils.accent("C") .. "lient on tag",
         pattern = { 't', 'c', '%d*', '[ghl]' },
         handler = function(_, _, _, count, movement)
             taghelper(function(tag)
@@ -215,7 +213,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Move focused client to tag",
+        description = utils.accent("M") .. "ove focused client to tag",
         pattern = {'m', '%d*', '[ghl]'},
         handler = function(_, _, count, movement)
             taghelper(function(tag)
@@ -227,7 +225,7 @@ local normal_commands = {
         end
     },
     {
-        description = "Move focused client to Screen by direction",
+        description = utils.accent("M") .. "ove focused client to " .. utils.accent("S") .. "creen",
         pattern = {'m', 's', '%d*', '[ghjkl]'},
         handler = function(_, _, _, count, movement)
             local c = client.focus
@@ -249,7 +247,7 @@ local normal_commands = {
 
     -- Screen handling
     {
-        description = "focus Screen by direction or globally",
+        description = "focus " .. utils.accent("S") .. "creen by direction or globally",
         pattern = { 's', '%d*', '[ghjkl]' },
         handler = function (_, _, count, movement)
             count = count == '' and 1 or tonumber(count)
@@ -266,13 +264,13 @@ local normal_commands = {
     },
     {
         -- https://github.com/lcpz/dots/blob/master/bin/screenshot
-        description = "Yank a Screen (take a screenshot)",
+        description = utils.accent("Y") .. "ank a " .. utils.accent("S") .. "creen (take a screenshot)",
         pattern = { 'y', 's' },
         handler = function() os.execute("screenshot") end
     },
     -- Misc
     {
-        description = "Wibox Toggle",
+        description = utils.accent("W") .. "ibox " .. utils.accent("T") .. "oggle",
         pattern = { 'W', 't' },
         handler = function ()
             for s in screen do
@@ -284,21 +282,21 @@ local normal_commands = {
         end
     },
     {
-        description = "Widget show Calendar",
+        description = utils.accent("W") .. "idget show " .. utils.accent("C") .. "alendar",
         pattern = { 'w', 'c' },
         handler = function ()
             if beautiful.cal then beautiful.cal.show(7) end
         end
     },
     {
-        description= "Widget show Filesystem",
+        description= utils.accent("W") .. "idget show " .. utils.accent("F") .. "ilesystem",
         pattern = { 'w', 's' },
         handler = function()
             if beautiful.fs then beautiful.fs.show(7) end
         end
     },
     {
-        description= "Widget show weather",
+        description= utils.accent("W") .. "idget show " .. utils.accent("W") .. "eather",
         pattern = { 'w', 'w' },
         handler = function()
             if beautiful.weather then beautiful.weather.show(7) end

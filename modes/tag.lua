@@ -1,11 +1,10 @@
+local awesome, client, mouse, screen, tag = awesome, client, mouse, screen, tag
+
 local awful = require("awful")
 local lain = require("lain")
-local naughty = require("naughty")
-local grect = require("gears.geometry").rectangle
 
 local utils = require("modes.utils")
 local taghelper = utils.taghelper
-local directions = utils.directions
 
 local tag_commands = {
     {
@@ -58,14 +57,14 @@ local tag_commands = {
         end
     },
     {
-        description = "Toggle Tag",
+        description = utils.accent("T") .. "oggle Tag",
         pattern = { 't', '%d*', '[ghl]' },
         handler = function(_, _, count, movement)
             taghelper(awful.tag.viewtoggle, count, movement)
         end
     },
     {
-        description = "Move focused client to tag",
+        description = utils.accent("M") .. "ove focused client to tag",
         pattern = {'m', '%d*', '[ghl]'},
         handler = function(_, _, count, movement)
             taghelper(function(tag)
@@ -77,7 +76,7 @@ local tag_commands = {
         end
     },
     {
-        description = "toggle focused Client on tag",
+        description = "toggle focused " .. utils.accent("C") .. "lient on tag",
         pattern = { 'c', '%d*', '[ghl]' },
         handler = function(_, _, count, movement)
             taghelper(function(tag)
@@ -89,7 +88,7 @@ local tag_commands = {
         end
     },
     {
-        description = "move to master",
+        description = utils.accent("M") .. "ove to " .. utils.accent("M") .. "aster",
         pattern = {'m', 'm'},
         handler = function()
             local c, m = client.focus, awful.client.getmaster()

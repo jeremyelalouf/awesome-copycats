@@ -45,22 +45,22 @@ local common_commands = {
 
     -- Modes switching
     {
-        description = "enter insert mode",
+        description = "enter " .. utils.accent("I") .. "nsert mode",
         pattern = {'i'},
         handler = function(mode) mode.stop() end
     },
     {
-        description = "enter launcher mode",
+        description = "enter launche".. utils.accent("R") .. " mode",
         pattern = {'r'},
         handler = function(mode) mode.start("launcher") end
     },
     {
-        description = "enter visual mode",
+        description = "enter " .. utils.accent("V") .. "isual mode",
         pattern = {'v'},
         handler = function(mode) mode.start("visual") end
     },
     {
-        description = "enter tag mode",
+        description = "enter " .. utils.accent("T") .. "ag mode",
         pattern = {'T'},
         handler = function(mode) mode.start("tag") end
     }

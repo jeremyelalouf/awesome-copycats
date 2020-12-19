@@ -1,6 +1,8 @@
 local awful     = require("awful")
 local grect = require("gears.geometry").rectangle
 
+local utils = require("modes.utils")
+
 local visual_commands = {
   {
     description = "swap client by direction",
@@ -57,7 +59,7 @@ local visual_commands = {
     end
   },
   {
-    description = "change number of master clients",
+    description = "change number of " .. utils.accent("M") .. "aster clients",
     pattern = {'m', '%d*', '[,.]'},
     handler = function(_, _, count, movement)
       count = count == '' and 1 or tonumber(count)
@@ -72,7 +74,7 @@ local visual_commands = {
     end
   },
   {
-    description = "change number of columns",
+    description = "change number of " .. utils.accent("C") .. "olumns",
     pattern = {'c', '%d*', '[,.]'},
     handler = function(_, _, count, movement)
       count = count == '' and 1 or tonumber(count)
@@ -98,7 +100,7 @@ local visual_commands = {
     end
   },
   {
-    description = "change useless gap",
+    description = "change useless " .. utils.accent("G") .. "ap",
     pattern = {'g', '%d*', '[,.]'},
     handler = function(_, _, count, movement)
       count = count == '' and 1 or tonumber(count)

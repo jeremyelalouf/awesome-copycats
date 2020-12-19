@@ -1,14 +1,11 @@
-local ipairs, string, os, table, tostring, tonumber, type = ipairs, string, os, table, tostring, tonumber, type
+local string, os, table, tostring, tonumber, type = string, os, table, tostring, tonumber, type
 
 local awful = require("awful")
-local wibox = require("wibox")
-local menubar = require("menubar")
-local naughty       = require("naughty")
-local hotkeys_popup = require("awful.hotkeys_popup")
+local utils = require("modes.utils")
 
 local launcher_commands = {
     {
-        description = "lua execute prompt",
+        description = "lua e" .. utils.accent("X") .. "ecute prompt",
         pattern = {'x'},
         handler = function()
             awful.prompt.run {
@@ -20,15 +17,7 @@ local launcher_commands = {
         end,
     },
     {
-        description = "run prompt",
-        pattern = {'s'},
-        handler = function(mode)
-            awful.screen.focused().mypromptbox:run()
-            mode.stop()
-        end
-    },
-    {
-        description = "open a terminal",
+        description = "open a " .. utils.accent("T") .. "erminal",
         pattern = {'%d*', 't'},
         handler = function(mode, count)
             count = count == '' and 1 or tonumber(count)
@@ -41,14 +30,15 @@ local launcher_commands = {
         end
     },
     {
-        description = "lock screen",
+        description = utils.accent("L") .. "ock screen",
         pattern = { 'l' },
-        handler = function() -- naughty.notify({ text = awful.util.lock }) 
+        handler = function(mode)
             awful.spawn(awful.util.locker)
+            mode.start("normal")
         end
     },
     {
-        description = "open Menu",
+        description = "open " .. utils.accent("M") .. "enu",
         pattern = {'m'},
         handler = function() awful.util.mymainmenu:show() end
     },

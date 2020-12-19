@@ -1,5 +1,6 @@
 local awesome, client, mouse, screen, tag = awesome, client, mouse, screen, tag
 local awful         = require("awful")
+local beautiful     = require("beautiful")
 
 local directions = {h = 'left', j = 'down', k = 'up', l = 'right'}
 
@@ -21,9 +22,15 @@ local function taghelper(func, count, movement)
     end
 end
 
+local function accent_str(str, color)
+    color = color or beautiful.get().fg_focus
+    return string.format("<span foreground=\"%s\"><b>%s</b></span>", color, str)
+end
+
 local module = {
     taghelper = taghelper,
-    directions = directions
+    directions = directions,
+    accent = accent_str
 }
 
 return module
