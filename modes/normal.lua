@@ -14,9 +14,10 @@ local normal_commands = {
         description = "focus tag by direction or globally",
         pattern = {'%d*', '[gHL]'},
         handler = function(_, count, movement)
+            local nomvt = count == ''
             count = count == '' and 1 or tonumber(count)
 
-            if movement == 'g' then
+            if movement == 'g' and not nomvt then
                 local s= awful.screen.focused()
                 local t= s.tags[count]
                 if t then
@@ -250,9 +251,10 @@ local normal_commands = {
         description = "focus " .. utils.accent("S") .. "creen by direction or globally",
         pattern = { 's', '%d*', '[ghjkl]' },
         handler = function (_, _, count, movement)
+            local nomvt = count == ''
             count = count == '' and 1 or tonumber(count)
 
-            if movement == 'g' then
+            if movement == 'g' and not nomvt then
                 awful.screen.focus(count)
             else
                 while count ~= 0 do
