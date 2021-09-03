@@ -17,6 +17,7 @@ local awesome_ctl = {
 }
 
 local common_commands = {
+    merge=true,
     {
         description = "Run command or control awesome",
         pattern = {':'},
@@ -63,6 +64,11 @@ local common_commands = {
         description = "enter " .. utils.accent("T") .. "ag mode",
         pattern = {'T'},
         handler = function(mode) mode.start("tag") end
+    },
+    {
+        description = "enter " .. utils.accent("M") .. "ouse mode",
+        pattern = {'M'},
+        handler = function(mode) mode.start("mouse") end
     }
 }
 
