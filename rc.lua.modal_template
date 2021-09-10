@@ -22,9 +22,6 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
                       require("awful.hotkeys_popup.keys")
 local my_table      = awful.util.table or gears.table -- 4.{0,1} compatibility
 local dpi           = require("beautiful.xresources").apply_dpi
-
-local modalawesome  = require("modalawesome")
-local modes         = require("modes")
 -- }}}
 
 -- {{{ Error handling
@@ -201,6 +198,9 @@ lain.layout.cascade.tile.ncol          = 2
 
 beautiful.init(string.format("%s/.config/awesome/themes/%s/theme.lua", os.getenv("HOME"), chosen_theme))
 -- }}}
+
+local modalawesome  = require("modalawesome")
+local modes         = require("modes") // beautiful must be initialized at this point
 
 -- {{{ Menu
 local myawesomemenu = {
